@@ -1,7 +1,6 @@
 # -----------------------------
 # 1. IMPORTS
 # -----------------------------
-# from random import randint, randrange
 from datetime import date
 
 from repository import save_daily_record
@@ -48,10 +47,8 @@ def calc_user_cml(user_weight, user_act_factor):
     bmr = user_weight * 24.2  # Basal Metabolic Rate (in kcal/day)
     return round(bmr * user_act_factor, 2)  # Calorie Maintenance Level (in kcal/day)
 
-
 def calc_user_bmr(user_weight):
     return round(user_weight * 24.2, 2)
-
 
 def calc_user_fat_perc(skinfolds_sum, age_in_years, reference):
     if reference == TITLES["Male"]:
@@ -70,10 +67,8 @@ def calc_user_fat_perc(skinfolds_sum, age_in_years, reference):
         )
     return round((495 / body_density) - 450, 2)  # Current Body Fat Percentage (in %)
 
-
 def calc_user_fat_lvl(user_weight, fat_perc):
     return round(user_weight / 100 * fat_perc, 2)  # Current Body Fat Level (in kg)
-
 
 def input_weight_fail_proof():
     while True:
@@ -86,7 +81,6 @@ def input_weight_fail_proof():
             # If an error occurs (like typing text instead of a float)
             print("You need to type a whole or decimal number. Try again.")
 
-
 def input_sex_fail_proof():
     while True:
         # .strip() removes accidental spaces, .title() capitalizes the first letter
@@ -95,7 +89,6 @@ def input_sex_fail_proof():
         if sex in TITLES:
             return TITLES[sex]
         print("You need to type 'Male' or 'Female'. Try again.")
-
 
 def input_whole_number_fail_proof(prompt_text):
     while True:
