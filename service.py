@@ -1,12 +1,13 @@
 # -----------------------------
 # 1. IMPORTS
 # -----------------------------
+# from random import randint, randrange
 from datetime import date
 
 from repository import save_daily_record
 
 # -----------------------------
-# 2. SETUP (CONSTANTS & DICTIONARIES)
+# 2. SETUP (CONSTANTS & LISTS & DICTIONARIES)
 # -----------------------------
 # always 1.2 - we are calculating CML without any daily exercise
 TODAYS_ACT_FACTOR = 1.2
@@ -20,21 +21,21 @@ users = [
     {
         "name": "Anna",
         "weight": 65.0,
-        "reference": TITLES["Female"],
+        "reference": "dear Madam",
         "skinfolds_sum": 55,
         "age_in_years": 47,
     },
     {
         "name": "John",
         "weight": 82.5,
-        "reference": TITLES["Male"],
+        "reference": "dear Sir",
         "skinfolds_sum": 45,
         "age_in_years": 55,
     },
     {
         "name": "Sasha",
         "weight": 70.0,
-        "reference": TITLES["Female"],
+        "reference": "dear Madam",
         "skinfolds_sum": 50,
         "age_in_years": 30,
     },
@@ -67,8 +68,6 @@ def calc_user_fat_perc(skinfolds_sum, age_in_years, reference):
             + (0.0000023 * (skinfolds_sum ** 2))
             - (0.0001392 * age_in_years)
         )
-    else:
-        raise ValueError("reference must be TITLES['Male'] or TITLES['Female']")
     return round((495 / body_density) - 450, 2)  # Current Body Fat Percentage (in %)
 
 
@@ -105,29 +104,27 @@ def input_whole_number_fail_proof(prompt_text):
         except ValueError:
             print("You need to type a whole or decimal number. Try again.")
 
-
-def get_user_names():
-    return [user["name"] for user in users]
-
-
-def find_user_by_name(user_name):
-    for user in users:
-        if user["name"] == user_name:
-            return user
-    return None
-
-
-def add_user(name, weight, reference, skinfolds_sum, age_in_years):
-    user = {
-        "name": name,
-        "weight": weight,
-        "reference": reference,
-        "skinfolds_sum": skinfolds_sum,
-        "age_in_years": age_in_years,
+# GUI / layered-app helpers
+def build_todays_record(user):
+    """Build a plain daily record (no database details)."""
+    return {
+        "date": todays_date_str(),
+        "weight": user["weight"],
+        "skinfolds_sum": user["skinfolds_sum"],
+        "bmr": calc_user_bmr(user["weight"]),
+        "cml": calc_user_cml(user["weight"], TODAYS_ACT_FACTOR),
     }
-    users.append(user)
-    return user
 
+def todays_date_str():
+    """Build a string representation of the current date."""
+    return date.today().strftime("%d-%m-%Y")
+
+
+def save_todays_user_record(user):
+    """Service API: calculate today's record, then ask the repository to save it."""
+    record = build_todays_record(user)
+    save_daily_record(record)
+    return record
 
 def build_user_stats_message(user):
     fat_perc = calc_user_fat_perc(
@@ -145,24 +142,30 @@ def build_user_stats_message(user):
         f"\n{fat_kg}kg fat ({fat_perc}% of your body weight)\n"
     )
 
+def get_user_names():
+    return [user["name"] for user in users]
 
-def todays_date_str():
-    return date.today().strftime("%d-%m-%Y")
+def find_user_by_name(user_name):
+    for user in users:
+        if user["name"] == user_name:
+            return user
+    return None
 
-
-def build_todays_record(user):
-    """Build a plain daily record (no database details)."""
-    return {
-        "date": todays_date_str(),
-        "weight": user["weight"],
-        "skinfolds_sum": user["skinfolds_sum"],
-        "bmr": calc_user_bmr(user["weight"]),
-        "cml": calc_user_cml(user["weight"], TODAYS_ACT_FACTOR),
+def add_user(name, weight, reference, skinfolds_sum, age_in_years):
+    user = {
+        "name": name,
+        "weight": weight,
+        "reference": reference,
+        "skinfolds_sum": skinfolds_sum,
+        "age_in_years": age_in_years,
     }
+    users.append(user)
+    return user
 
 
-def save_todays_user_record(user):
-    """Service API: calculate today's record, then ask the repository to save it."""
-    record = build_todays_record(user)
-    save_daily_record(record)
-    return record
+# -----------------------------
+# 4. MAIN PROGRAM (console version - barred for GUI app)
+# -----------------------------
+"""
+no longer here, moved to main.py
+"""
