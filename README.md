@@ -1,41 +1,51 @@
-# Fat Burner App - Simple Version
+# Fat Burner App (pre-OOP mini app)
 
-This is a desktop app to track your weight, fat level and calorie intake/burn using the  guizero GUI.
+Desktop app that tracks weight / skinfold-based fat estimates and calorie
+maintenance level, then optionally saves today's row to storage.
 
+Simple clean-architecture split (plug/unplug each layer):
+
+| Layer | File | Knows about |
+|---|---|---|
+| Controller (frontend) | `gui.py` | widgets only; calls `logic` |
+| Service (backend) | `logic.py` | users, calcs; calls `repository` |
+| Repository (DB) | `repository.py` | storage settings + Google Sheets details |
+| Entry | `main.py` | starts the app |
+
+Swap the GUI framework → change `gui.py` only.  
+Swap Sheets for SQLite/CSV → change `repository.py` only.
+
+## Learning pathway
+
+1. `logic.py` — continuous from the console lesson  
+   (`# 2. SETUP (CONSTANTS & DICTIONARIES)`, calc + `input_*_fail_proof`)
+2. `repository.py` — persistence settings + Google Sheets save
+3. `gui.py` — thin frontend / controller
+4. `main.py` — entry point (`python main.py`)
 
 ## Features
 
-- Registering and Logging In Multiple Users
-- For Each User:
- 1. Calculating Fat Level based on Weight and Skinfolds for each
- 2. Saving all Your Data in Your Online Google Sheet with just one click
+- Register multiple users (in-memory list of dictionaries)
+- Select a user and view CML + estimated body-fat stats
+- Save today's date / weight / skinfolds / BMR / CML via the repository
 
+## Setup
 
-## Prerequisites
+```bash
+python -m venv venv
+venv\Scripts\activate
+pip install -r requirements.txt
+```
 
-- Python 3.x
-- guizero
-- gspread
-- google-auth
-- google-auth-oauthlib
-- google-auth-httplib2
-- google-api-python-client
-- guizero
-- pygame
-- requests
-- setuptools
+1. Place your Google service account JSON next to `repository.py`
+2. Set `SERVICE_ACCOUNT_FILE` / `SHEET_NAME` in `repository.py`
+3. Share the sheet with the service account email
 
+## Run
 
-## Installation
+```bash
+python main.py
+```
 
-- Test the app's functionalities using the existing service_account_key.json by opening the folder in VS code and launching the 
-    "simple_gui_desktop.py". Open the corresponding google folder to check the records (
-        https://drive.google.com/drive/folders/1RxX80Imkk1n_pyu1GneC4VfYuS1A8nxo
-    ) or the sheet itself (
-        https://docs.google.com/spreadsheets/d/1wvQfVCq6EjuzSytYNeJivSr0Pq8FANYZsTYffbWnAbU/edit?gid=0#gid=0
-    )
-- Set up your Google Service Account Key on Google Cloud and download the service_account_key.json
-- Create a folder and a Google Sheet granting access rights to the service account.
-- Enter the correct Google data in the ./app/"config.py" file of this app.
-- Open the project in VS code and run the ./app/"gui_mobile.py" file of. this app.
-
+Next course step: turn service/repository functions into objects (OOP),
+keeping the GUI humble.

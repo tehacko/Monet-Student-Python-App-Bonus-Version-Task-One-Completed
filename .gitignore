@@ -26,5 +26,8 @@ guizero/
 .DS_Store  # macOS
 Thumbs.db  # Windows
 
-# Secrets
+# Secrets / local env
 student-python-app-connect-e082504f4125.json
+shaped-terrain-*.json
+service_account*.json
+.env
